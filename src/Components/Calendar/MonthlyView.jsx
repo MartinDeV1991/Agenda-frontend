@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const generateMonthDates = (year, month) => {
     const dates = [];
@@ -13,8 +13,10 @@ const generateMonthDates = (year, month) => {
     return { dates, adjustedFirstDay };
 };
 
-const MonthlyView = ({ data }) => {
+const MonthlyView = ({ data, setData, editingTask, setEditingTask, isNameFocused, setIsNameFocused, isTimeFocused, setIsTimeFocused }) => {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+    const [editingName, setEditingName] = useState('');
+    const [editingTime, setEditingTime] = useState('');
 
     const months = Array.from({ length: 12 }, (_, index) => {
         const date = new Date();
@@ -34,6 +36,39 @@ const MonthlyView = ({ data }) => {
     const year = 2024; // Assuming a specific year for now
     const { dates, adjustedFirstDay } = generateMonthDates(year, selectedMonth);
     const monthName = dates[0].toLocaleDateString('en-CA', { month: 'long', year: 'numeric' });
+
+    const startEditing = (task) => {
+        setEditingTask(task);
+        setEditingName(task.name);
+        setEditingTime(task.time);
+    };
+
+    const handleNameChange = (event) => {
+        setEditingName(event.target.value);
+    };
+
+    const handleTimeChange = (event) => {
+        setEditingTime(event.target.value);
+    };
+
+    const handleInputBlur = () => {
+        if (editingTask) {
+            const updatedTasks = data.map(task =>
+                task === editingTask ? { ...task, name: editingName, time: editingTime } : task
+            );
+            setData(updatedTasks);
+            if (!isNameFocused && !isTimeFocused) {
+                setEditingTask(null);
+                console.log('Task updated successfully');
+            }
+        }
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleInputBlur();
+        }
+    };
 
     return (
         <div className="calendar-container-monthview">
@@ -57,7 +92,39 @@ const MonthlyView = ({ data }) => {
                         <div className="day-number-monthview">{date.getDate()}</div>
                         <div className="tasks-monthview">
                             {findTasksForDate(date).map((task, index) => (
-                                <div key={index} className="task-monthview">{task.name} {task.time ? `(${task.time})` : ('')}</div>
+                                <div
+                                    key={index}
+                                    className="task-monthview"
+                                    onClick={() => startEditing(task)}
+                                >
+                                    {editingTask === task ? (
+                                        <div>
+                                            <input
+                                                type="text"
+                                                value={editingName}
+                                                onChange={handleNameChange}
+                                                onKeyDown={handleKeyDown}
+                                                onFocus={() => setIsNameFocused(true)}
+                                                onBlur={() => {
+                                                    handleInputBlur();
+                                                }}
+                                                autoFocus
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editingTime}
+                                                onChange={handleTimeChange}
+                                                onKeyDown={handleKeyDown}
+                                                onFocus={() => setIsTimeFocused(true)}
+                                                onBlur={() => {
+                                                    handleInputBlur();
+                                                }}
+                                            />
+                                        </div>
+                                    ) : (
+                                        `${task.name} ${task.time ? `(${task.time})` : ''}`
+                                    )}
+                                </div>
                             ))}
                         </div>
                     </div>

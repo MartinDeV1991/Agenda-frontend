@@ -48,3 +48,58 @@ h1 {
   margin-top: 10px;
   font-weight: 900;
 }
+
+
+.calendar-container-monthview {
+  margin: 20px auto;
+  width: 80%;
+}
+
+.month-select-monthview {
+  margin-bottom: 10px;
+}
+
+.week-row-monthview {
+  display: flex;
+}
+
+.day-label-monthview {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.calendar-grid-monthview {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day-card-monthview {
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.day-card-monthview.empty {
+  background-color: transparent;
+  border: none;
+  margin-bottom: 5px;
+}
+
+.day-number-monthview {
+  font-weight: bold;
+}
+
+.tasks-monthview {
+  margin-top: 5px;
+}
+
+.task-monthview {
+  background-color: #f0f0f0;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 10px;
+}

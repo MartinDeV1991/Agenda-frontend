@@ -48,6 +48,19 @@ const dummyData = [
     date: "2024-06-11",
     shortDescription: "Work on developing the new backend API endpoints."
   },
+  {
+    name: "Client Presentation",
+    category: "Presentation",
+    date: "2024-06-14",
+    shortDescription: "Present the project progress to the client."
+  },
+  {
+    name: "Client Presentation",
+    category: "Presentation",
+    time: "",
+    date: "2024-06-23",
+    shortDescription: "Present the project progress to the client."
+  },
 ];
 
 export default dummyData;

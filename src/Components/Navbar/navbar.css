@@ -1,0 +1,11 @@
+.navbar {
+    padding: 20px;
+    background-color: rgb(65, 114, 150);
+}
+
+.link-to-page {
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    text-decoration: none;
+}

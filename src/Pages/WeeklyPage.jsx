@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 
-// import CalendarCards from "../Components/Calendar/CalendarCards";
-import MonthlyView from "../Components/Calendar/MonthlyView";
-import './calendar.css'
+import './weeklypage.css'
+import WeeklyView from "../Components/Calendar/WeeklyView";
 
-const Calendar = () => {
+const WeeklyPage = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
@@ -24,11 +23,10 @@ const Calendar = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <h1>Montly Agenda</h1>
-            {/* <CalendarCards data={dummyData} /> */}
-            <MonthlyView data={data} />
+            <h1>Weekly Agenda</h1>
+            <WeeklyView data={data} />
         </div>
     )
 }
 
-export default Calendar;
+export default WeeklyPage;

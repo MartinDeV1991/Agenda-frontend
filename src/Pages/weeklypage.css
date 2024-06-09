@@ -1,0 +1,43 @@
+/* styles.css */
+.weekly-calendar.weekview {
+    font-family: Arial, sans-serif;
+}
+
+.week-selector select {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.week-days {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.day-card {
+    flex: 1 0 calc(14.28% - 10px); /* 14.28% to evenly space the cards in a row */
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.task {
+    margin-top: 10px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+.task-name {
+    font-weight: bold;
+}
+
+.task-time {
+    color: #666;
+}
+
+.task-description {
+    margin-top: 5px;
+}

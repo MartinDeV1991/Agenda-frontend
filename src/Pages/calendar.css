@@ -1,0 +1,50 @@
+/* Basic styling for the app */
+.app-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 80vh;
+  /* Adjust as needed */
+}
+
+.week-row {
+  display: flex;
+}
+
+.day-card {
+  border: 1px solid #ccc;
+  padding: 0px;
+  width: 150px;
+  height: 100px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 8pt;
+}
+
+.day-card:not(:empty) {
+  background-color: #f9f9f9;
+}
+
+.day-card div {
+  margin-bottom: 5px;
+}
+
+.new-month-line {
+  height: 2px;
+  background-color: white;
+  margin: 10px 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+.tasks {
+  margin-top: 10px;
+  font-weight: 900;
+}

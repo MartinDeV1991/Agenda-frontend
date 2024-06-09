@@ -13,10 +13,11 @@ const generateMonthDates = (year, month) => {
     return { dates, adjustedFirstDay };
 };
 
-const MonthlyView = ({ data, setData, editingTask, setEditingTask, isNameFocused, setIsNameFocused, isTimeFocused, setIsTimeFocused }) => {
+const MonthlyView = ({ data, setData }) => {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [editingName, setEditingName] = useState('');
     const [editingTime, setEditingTime] = useState('');
+    const [editingTask, setEditingTask] = useState(null);
 
     const months = Array.from({ length: 12 }, (_, index) => {
         const date = new Date();
@@ -33,7 +34,7 @@ const MonthlyView = ({ data, setData, editingTask, setEditingTask, isNameFocused
         return data.filter(task => task.date === date.toLocaleDateString('en-CA'));
     };
 
-    const year = 2024; // Assuming a specific year for now
+    const year = 2024;
     const { dates, adjustedFirstDay } = generateMonthDates(year, selectedMonth);
     const monthName = dates[0].toLocaleDateString('en-CA', { month: 'long', year: 'numeric' });
 
@@ -57,16 +58,32 @@ const MonthlyView = ({ data, setData, editingTask, setEditingTask, isNameFocused
                 task === editingTask ? { ...task, name: editingName, time: editingTime } : task
             );
             setData(updatedTasks);
-            if (!isNameFocused && !isTimeFocused) {
-                setEditingTask(null);
-                console.log('Task updated successfully');
-            }
+            data.forEach(task => task === editingTask ? uploadTask() : null);
         }
     };
 
+    const uploadTask = () => {
+        const id = editingTask._id;
+        const task = { ...editingTask, name: editingName, time: editingTime }
+        fetch(`http://localhost:5000/mongodb/item/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(task),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Updated document:', data);
+            })
+            .catch((error) => {
+                console.error('Error updating document:', error);
+            });
+    }
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             handleInputBlur();
+            setEditingTask(null);
         }
     };
 
@@ -88,7 +105,9 @@ const MonthlyView = ({ data, setData, editingTask, setEditingTask, isNameFocused
                     <div key={`empty-${index}`} className="day-card-monthview empty"></div>
                 ))}
                 {dates.map((date, index) => (
-                    <div key={index} className="day-card-monthview">
+                    <div key={index} className="day-card-monthview"
+                    onClick={() => console.log('function to create new task here')}
+                    >
                         <div className="day-number-monthview">{date.getDate()}</div>
                         <div className="tasks-monthview">
                             {findTasksForDate(date).map((task, index) => (
@@ -97,14 +116,13 @@ const MonthlyView = ({ data, setData, editingTask, setEditingTask, isNameFocused
                                     className="task-monthview"
                                     onClick={() => startEditing(task)}
                                 >
-                                    {editingTask === task ? (
+                                    {editingTask && task && editingTask._id === task._id ? (
                                         <div>
                                             <input
                                                 type="text"
                                                 value={editingName}
                                                 onChange={handleNameChange}
                                                 onKeyDown={handleKeyDown}
-                                                onFocus={() => setIsNameFocused(true)}
                                                 onBlur={() => {
                                                     handleInputBlur();
                                                 }}
@@ -115,7 +133,6 @@ const MonthlyView = ({ data, setData, editingTask, setEditingTask, isNameFocused
                                                 value={editingTime}
                                                 onChange={handleTimeChange}
                                                 onKeyDown={handleKeyDown}
-                                                onFocus={() => setIsTimeFocused(true)}
                                                 onBlur={() => {
                                                     handleInputBlur();
                                                 }}

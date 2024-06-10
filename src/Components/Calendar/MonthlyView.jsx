@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ObjectId } from "bson";
 
 const generateMonthDates = (year, month) => {
     const dates = [];
@@ -18,6 +19,7 @@ const MonthlyView = ({ data, setData }) => {
     const [editingName, setEditingName] = useState('');
     const [editingTime, setEditingTime] = useState('');
     const [editingTask, setEditingTask] = useState(null);
+    const [newEditingTask, setNewEditingTask] = useState(null);
 
     const months = Array.from({ length: 12 }, (_, index) => {
         const date = new Date();
@@ -42,6 +44,19 @@ const MonthlyView = ({ data, setData }) => {
         setEditingTask(task);
         setEditingName(task.name);
         setEditingTime(task.time);
+        setNewEditingTask(null);
+    };
+
+    const createNewTaskAndEdit = (date) => {
+        setEditingTask(null);
+        let task = {
+            _id: new ObjectId().toString(),
+            name: '',
+            time: '',
+            date: date.toLocaleDateString('en-CA')
+        }
+        startEditing(task);
+        setNewEditingTask(task);
     };
 
     const handleNameChange = (event) => {
@@ -52,7 +67,7 @@ const MonthlyView = ({ data, setData }) => {
         setEditingTime(event.target.value);
     };
 
-    const handleInputBlur = () => {
+    const UpdateTask = () => {
         if (editingTask) {
             const updatedTasks = data.map(task =>
                 task === editingTask ? { ...task, name: editingName, time: editingTime } : task
@@ -60,87 +75,146 @@ const MonthlyView = ({ data, setData }) => {
             setData(updatedTasks);
             data.forEach(task => task === editingTask ? uploadTask() : null);
         }
+        console.log("updating")
     };
 
     const uploadTask = () => {
         const id = editingTask._id;
         const task = { ...editingTask, name: editingName, time: editingTime }
-        fetch(`http://localhost:5000/mongodb/item/${id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(task),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Updated document:', data);
+        if (task.name !== '') {
+            fetch(`http://localhost:5000/mongodb/item/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(task),
             })
-            .catch((error) => {
-                console.error('Error updating document:', error);
-            });
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Updated document:', data);
+                })
+                .catch((error) => {
+                    console.error('Error updating document:', error);
+                });
+        }
     }
+
+    const UpdateTask1 = () => {
+        const task = { ...newEditingTask, name: editingName, time: editingTime }
+        if (task && task.name !== '') {
+            setData((prevData) => [...prevData, task]);
+            uploadTask1(task);
+        }
+        console.log("updating")
+    };
+
+    const uploadTask1 = (task) => {
+        console.log(task)
+        if (task.name !== '') {
+            fetch(`http://localhost:5000/mongodb/item/${task._id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(task),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Updated document:', data);
+                })
+                .catch((error) => {
+                    console.error('Error updating document:', error);
+                });
+        }
+    }
+    const handleKeyDown1 = (event) => {
+        if (event.key === 'Enter') {
+            UpdateTask1();
+            setEditingTask(null);
+            setNewEditingTask(null);
+        }
+    };
+
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-            handleInputBlur();
+            UpdateTask();
             setEditingTask(null);
+            setNewEditingTask(null);
         }
     };
 
     return (
         <div className="calendar-container-monthview">
-            <select className="month-select-monthview" onChange={handleMonthChange}>
+            <select className="month-select-monthview" onChange={handleMonthChange} value={selectedMonth} >
                 {months.map(month => (
                     <option key={month.value} value={month.value}>{month.label}</option>
                 ))}
             </select>
+
             <h2 className="month-name-monthview">{monthName}</h2>
+            <div>{editingTask ? 'true' : 'false'}</div>
+            {editingTask && <div>{editingTask._id}</div>}
             <div className="week-row-monthview">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
                     <div key={day} className="day-label-monthview">{day}</div>
                 ))}
             </div>
+
             <div className="calendar-grid-monthview">
                 {Array.from({ length: adjustedFirstDay }).map((_, index) => (
                     <div key={`empty-${index}`} className="day-card-monthview empty"></div>
                 ))}
                 {dates.map((date, index) => (
                     <div key={index} className="day-card-monthview"
-                    onClick={() => console.log('function to create new task here')}
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) {
+                                createNewTaskAndEdit(date);
+                            }
+                        }}
                     >
                         <div className="day-number-monthview">{date.getDate()}</div>
                         <div className="tasks-monthview">
+                            {newEditingTask && parseInt(newEditingTask.date.split('-')[2], 10) === date.getDate() && <div><input
+                                type="text"
+                                value={editingName}
+                                onChange={handleNameChange}
+                                onKeyDown={handleKeyDown1}
+                                placeholder="Task Name"
+                                autoFocus
+                            />
+                                <input
+                                    type="text"
+                                    value={editingTime}
+                                    onChange={handleTimeChange}
+                                    onKeyDown={handleKeyDown1}
+                                    placeholder="Time"
+                                /></div>}
                             {findTasksForDate(date).map((task, index) => (
                                 <div
                                     key={index}
                                     className="task-monthview"
                                     onClick={() => startEditing(task)}
                                 >
-                                    {editingTask && task && editingTask._id === task._id ? (
-                                        <div>
-                                            <input
-                                                type="text"
-                                                value={editingName}
-                                                onChange={handleNameChange}
-                                                onKeyDown={handleKeyDown}
-                                                onBlur={() => {
-                                                    handleInputBlur();
-                                                }}
-                                                autoFocus
-                                            />
-                                            <input
-                                                type="text"
-                                                value={editingTime}
-                                                onChange={handleTimeChange}
-                                                onKeyDown={handleKeyDown}
-                                                onBlur={() => {
-                                                    handleInputBlur();
-                                                }}
-                                            />
-                                        </div>
-                                    ) : (
-                                        `${task.name} ${task.time ? `(${task.time})` : ''}`
-                                    )}
+                                    {!newEditingTask && editingTask && task && editingTask._id === task._id
+                                        ? (
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    value={editingName}
+                                                    onChange={handleNameChange}
+                                                    onKeyDown={handleKeyDown}
+                                                    autoFocus
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={editingTime}
+                                                    onChange={handleTimeChange}
+                                                    onKeyDown={handleKeyDown}
+                                                />
+                                            </div>
+                                        ) : (
+                                            `${task.name} ${task.time ? `(${task.time})` : ''}`
+                                        )}
                                 </div>
                             ))}
                         </div>

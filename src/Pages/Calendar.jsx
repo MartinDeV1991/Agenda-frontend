@@ -10,6 +10,7 @@ const Calendar = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log("fetching data...");
             try {
                 const response = await fetch('http://localhost:5000/mongodb/all-items');
                 const result = await response.json();

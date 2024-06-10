@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ObjectId } from "bson";
+import TaskInputs from "./TaskInputs";
 
 const generateMonthDates = (year, month) => {
     const dates = [];
@@ -67,49 +68,7 @@ const MonthlyView = ({ data, setData }) => {
         setEditingTime(event.target.value);
     };
 
-    const UpdateTask = () => {
-        if (editingTask) {
-            const updatedTasks = data.map(task =>
-                task === editingTask ? { ...task, name: editingName, time: editingTime } : task
-            );
-            setData(updatedTasks);
-            data.forEach(task => task === editingTask ? uploadTask() : null);
-        }
-        console.log("updating")
-    };
-
-    const uploadTask = () => {
-        const id = editingTask._id;
-        const task = { ...editingTask, name: editingName, time: editingTime }
-        if (task.name !== '') {
-            fetch(`http://localhost:5000/mongodb/item/${id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(task),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Updated document:', data);
-                })
-                .catch((error) => {
-                    console.error('Error updating document:', error);
-                });
-        }
-    }
-
-    const UpdateTask1 = () => {
-        const task = { ...newEditingTask, name: editingName, time: editingTime }
-        if (task && task.name !== '') {
-            setData((prevData) => [...prevData, task]);
-            uploadTask1(task);
-        }
-        console.log("updating")
-    };
-
-    const uploadTask1 = (task) => {
-        console.log(task)
+    const uploadTask = (task) => {
         if (task.name !== '') {
             fetch(`http://localhost:5000/mongodb/item/${task._id}`, {
                 method: 'POST',
@@ -127,9 +86,46 @@ const MonthlyView = ({ data, setData }) => {
                 });
         }
     }
+
+    const handleRemoveTask = (task) => {
+        if (window.confirm("Are you sure you want to delete this task?")) {
+            const updatedTasks = data.filter(t => t !== task);
+            setData(updatedTasks);
+            fetch(`http://localhost:5000/mongodb/item/${task._id}`, {
+                method: 'DELETE',
+            })
+                .then(() => {
+                    console.log('Task removed');
+                })
+                .catch((error) => {
+                    console.error('Error removing task:', error);
+                });
+        }
+    };
+
+    const UpdateTask = () => {
+        if (editingTask) {
+            const updatedTasks = data.map(task =>
+                task === editingTask ? { ...task, name: editingName, time: editingTime } : task
+            );
+            setData(updatedTasks);
+            data.forEach(task => task === editingTask ? uploadTask({ ...editingTask, name: editingName, time: editingTime }) : null);
+        }
+        console.log("updating")
+    };
+
+    const addTask = () => {
+        const task = { ...newEditingTask, name: editingName, time: editingTime }
+        if (task && task.name !== '') {
+            setData((prevData) => [...prevData, task]);
+            uploadTask(task);
+            console.log("updating")
+        }
+
+    };
     const handleKeyDown1 = (event) => {
         if (event.key === 'Enter') {
-            UpdateTask1();
+            addTask();
             setEditingTask(null);
             setNewEditingTask(null);
         }
@@ -152,8 +148,6 @@ const MonthlyView = ({ data, setData }) => {
             </select>
 
             <h2 className="month-name-monthview">{monthName}</h2>
-            <div>{editingTask ? 'true' : 'false'}</div>
-            {editingTask && <div>{editingTask._id}</div>}
             <div className="week-row-monthview">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
                     <div key={day} className="day-label-monthview">{day}</div>
@@ -174,49 +168,51 @@ const MonthlyView = ({ data, setData }) => {
                     >
                         <div className="day-number-monthview">{date.getDate()}</div>
                         <div className="tasks-monthview">
-                            {newEditingTask && parseInt(newEditingTask.date.split('-')[2], 10) === date.getDate() && <div><input
-                                type="text"
-                                value={editingName}
-                                onChange={handleNameChange}
-                                onKeyDown={handleKeyDown1}
-                                placeholder="Task Name"
-                                autoFocus
-                            />
-                                <input
-                                    type="text"
-                                    value={editingTime}
-                                    onChange={handleTimeChange}
-                                    onKeyDown={handleKeyDown1}
-                                    placeholder="Time"
-                                /></div>}
                             {findTasksForDate(date).map((task, index) => (
                                 <div
                                     key={index}
                                     className="task-monthview"
                                     onClick={() => startEditing(task)}
+                                    style={{ position: 'relative' }}
                                 >
-                                    {!newEditingTask && editingTask && task && editingTask._id === task._id
+
+                                    {!newEditingTask &&
+                                        editingTask &&
+                                        task &&
+                                        editingTask._id === task._id
                                         ? (
-                                            <div>
-                                                <input
-                                                    type="text"
-                                                    value={editingName}
-                                                    onChange={handleNameChange}
-                                                    onKeyDown={handleKeyDown}
-                                                    autoFocus
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={editingTime}
-                                                    onChange={handleTimeChange}
-                                                    onKeyDown={handleKeyDown}
-                                                />
-                                            </div>
+                                            <TaskInputs
+                                                editingName={editingName}
+                                                editingTime={editingTime}
+                                                handleNameChange={handleNameChange}
+                                                handleTimeChange={handleTimeChange}
+                                                handleKeyDown={handleKeyDown}
+                                            />
                                         ) : (
-                                            `${task.name} ${task.time ? `(${task.time})` : ''}`
-                                        )}
+                                            <>
+                                                {`${task.name} ${task.time ? `(${task.time})` : ''}`}
+                                                <button
+                                                    onClick={() => handleRemoveTask(task)}
+                                                    className="remove-button"
+                                                    style={{ fontSize: '10px', padding: '0px', position: 'absolute', top: '0px', right: '0px' }}
+                                                >
+                                                    x
+                                                </button>
+                                            </>
+                                        )
+                                    }
                                 </div>
                             ))}
+                            {newEditingTask &&
+                                parseInt(newEditingTask.date.split('-')[2], 10) === date.getDate() &&
+                                <TaskInputs
+                                    editingName={editingName}
+                                    editingTime={editingTime}
+                                    handleNameChange={handleNameChange}
+                                    handleTimeChange={handleTimeChange}
+                                    handleKeyDown={handleKeyDown1}
+                                />
+                            }
                         </div>
                     </div>
                 ))}

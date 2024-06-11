@@ -1,45 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ObjectId } from "bson";
 import TaskInputs from "./TaskInputs";
-
-const generateMonthDates = (year, month) => {
-    const dates = [];
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstDay = new Date(year, month, 1).getDay();
-    const adjustedFirstDay = (firstDay === 0) ? 6 : firstDay - 1;
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        dates.push(new Date(year, month, day));
-    }
-
-    return { dates, adjustedFirstDay };
-};
+import Dates from "./Dates";
 
 const MonthlyView = ({ data, setData }) => {
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+
+    const [dates, setDates] = useState([]);
+    const [firstDay, setFirstDay] = useState(0);
+
     const [editingName, setEditingName] = useState('');
     const [editingTime, setEditingTime] = useState('');
     const [editingTask, setEditingTask] = useState(null);
     const [newEditingTask, setNewEditingTask] = useState(null);
 
-    const months = Array.from({ length: 12 }, (_, index) => {
-        const date = new Date();
-        date.setMonth(index);
-        return { value: index, label: date.toLocaleDateString('en-CA', { month: 'long' }) };
-    });
-
-    const handleMonthChange = (event) => {
-        const selectedMonth = parseInt(event.target.value, 10);
-        setSelectedMonth(selectedMonth);
-    };
+    const [draggedTask, setDraggedTask] = useState(null); // drag
 
     const findTasksForDate = (date) => {
         return data.filter(task => task.date === date.toLocaleDateString('en-CA'));
     };
-
-    const year = 2024;
-    const { dates, adjustedFirstDay } = generateMonthDates(year, selectedMonth);
-    const monthName = dates[0].toLocaleDateString('en-CA', { month: 'long', year: 'numeric' });
 
     const startEditing = (task) => {
         setEditingTask(task);
@@ -139,15 +117,27 @@ const MonthlyView = ({ data, setData }) => {
         }
     };
 
+    const handleDragStart = (task) => {
+        setDraggedTask(task);
+    };
+
+    const handleDrop = (date) => {
+        const updatedTasks = data.map(task =>
+            task === draggedTask ? { ...task, date: date.toLocaleDateString('en-CA') } : task
+        );
+        setData(updatedTasks);
+        setDraggedTask(null);
+        const task = { ...draggedTask, date: date.toLocaleDateString('en-CA') }
+        uploadTask(task);
+    };
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+    };
+
     return (
         <div className="calendar-container-monthview">
-            <select className="month-select-monthview" onChange={handleMonthChange} value={selectedMonth} >
-                {months.map(month => (
-                    <option key={month.value} value={month.value}>{month.label}</option>
-                ))}
-            </select>
-
-            <h2 className="month-name-monthview">{monthName}</h2>
+            <Dates setDates={setDates} setFirstDay={setFirstDay} />
             <div className="week-row-monthview">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
                     <div key={day} className="day-label-monthview">{day}</div>
@@ -155,7 +145,7 @@ const MonthlyView = ({ data, setData }) => {
             </div>
 
             <div className="calendar-grid-monthview">
-                {Array.from({ length: adjustedFirstDay }).map((_, index) => (
+                {Array.from({ length: firstDay }).map((_, index) => (
                     <div key={`empty-${index}`} className="day-card-monthview empty"></div>
                 ))}
                 {dates.map((date, index) => (
@@ -165,6 +155,8 @@ const MonthlyView = ({ data, setData }) => {
                                 createNewTaskAndEdit(date);
                             }
                         }}
+                        onDragOver={handleDragOver}
+                        onDrop={() => handleDrop(date)}
                     >
                         <div className="day-number-monthview">{date.getDate()}</div>
                         <div className="tasks-monthview">
@@ -174,6 +166,8 @@ const MonthlyView = ({ data, setData }) => {
                                     className="task-monthview"
                                     onClick={() => startEditing(task)}
                                     style={{ position: 'relative' }}
+                                    draggable
+                                    onDragStart={() => handleDragStart(task)}
                                 >
 
                                     {!newEditingTask &&

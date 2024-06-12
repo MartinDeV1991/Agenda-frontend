@@ -3,8 +3,8 @@ import React from 'react';
 const TaskInputs = ({
     editingName,
     editingTime,
-    handleNameChange,
-    handleTimeChange,
+    setEditingName,
+    setEditingTime,
     handleKeyDown,
 }) => {
     return (
@@ -12,7 +12,7 @@ const TaskInputs = ({
             <input
                 type="text"
                 value={editingName}
-                onChange={handleNameChange}
+                onChange={(event) => setEditingName(event.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Task Name"
                 autoFocus
@@ -20,7 +20,7 @@ const TaskInputs = ({
             <input
                 type="text"
                 value={editingTime}
-                onChange={handleTimeChange}
+                onChange={(event) => setEditingTime(event.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Time"
             />

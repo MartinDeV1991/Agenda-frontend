@@ -1,33 +1,27 @@
 
 import React, { useState, useEffect } from 'react';
 
-// import CalendarCards from "../Components/Calendar/CalendarCards";
 import MonthlyView from "../Components/Calendar/MonthlyView";
-import RecurringTasks from "../Components/AddTasks/RecurringTasks";
+import AddRecurringTasks from "../Components/RecurringTasks/AddRecurringTasks";
+import ShiftRecurringTasks from '../Components/RecurringTasks/ShiftRecurringTasks';
+import RemoveRecurringTasks from '../Components/RecurringTasks/RemoveRecurringTasks';
 import './calendar.css'
+import { fetchAPI } from '../Util/fetch';
 
 const Calendar = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            console.log("fetching data...");
-            try {
-                const response = await fetch('http://localhost:5000/mongodb/all-items');
-                const result = await response.json();
-                setData(result);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-        fetchData();
+        fetchAPI(setData);
     }, []);
 
     return (
         <div style={{ padding: '20px' }}>
             <h1>Montly Agenda</h1>
             <MonthlyView data={data} setData={setData} />
-            <RecurringTasks />
+            <AddRecurringTasks setData={setData} />
+            <ShiftRecurringTasks data={data} setData={setData} />
+            <RemoveRecurringTasks data={data} setData={setData} />
         </div>
     )
 }

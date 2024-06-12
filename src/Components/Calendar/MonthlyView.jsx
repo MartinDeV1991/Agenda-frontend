@@ -2,6 +2,24 @@ import { useState } from "react";
 import { ObjectId } from "bson";
 import TaskInputs from "./TaskInputs";
 import Dates from "./Dates";
+import { postAPI, removeAPI } from "../../Util/fetch";
+
+const WeekRow = () => {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return (
+        <div className="week-row-monthview">
+            {days.map(day => (
+                <div key={day} className="day-label-monthview">{day}</div>
+            ))}
+        </div>
+    )
+};
+
+const EmptyDays = ({ count }) => (
+    Array.from({ length: count }).map((_, index) => (
+        <div key={`empty-${index}`} className="day-card-monthview empty"></div>
+    ))
+);
 
 const MonthlyView = ({ data, setData }) => {
 
@@ -13,7 +31,7 @@ const MonthlyView = ({ data, setData }) => {
     const [editingTask, setEditingTask] = useState(null);
     const [newEditingTask, setNewEditingTask] = useState(null);
 
-    const [draggedTask, setDraggedTask] = useState(null); // drag
+    const [draggedTask, setDraggedTask] = useState(null);
 
     const findTasksForDate = (date) => {
         return data.filter(task => task.date === date.toLocaleDateString('en-CA'));
@@ -38,55 +56,22 @@ const MonthlyView = ({ data, setData }) => {
         setNewEditingTask(task);
     };
 
-    const handleNameChange = (event) => {
-        setEditingName(event.target.value);
-    };
-
-    const handleTimeChange = (event) => {
-        setEditingTime(event.target.value);
-    };
-
     const uploadTask = (task) => {
-        if (task.name !== '') {
-            fetch(`http://localhost:5000/mongodb/item/${task._id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(task),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Updated document:', data);
-                })
-                .catch((error) => {
-                    console.error('Error updating document:', error);
-                });
+        if (task.name === '') {
+            alert("Please enter a task name");
+            return;
         }
+        postAPI(task, setData);
     }
 
     const handleRemoveTask = (task) => {
         if (window.confirm("Are you sure you want to delete this task?")) {
-            const updatedTasks = data.filter(t => t !== task);
-            setData(updatedTasks);
-            fetch(`http://localhost:5000/mongodb/item/${task._id}`, {
-                method: 'DELETE',
-            })
-                .then(() => {
-                    console.log('Task removed');
-                })
-                .catch((error) => {
-                    console.error('Error removing task:', error);
-                });
+            removeAPI(task, setData);
         }
     };
 
     const UpdateTask = () => {
         if (editingTask) {
-            const updatedTasks = data.map(task =>
-                task === editingTask ? { ...task, name: editingName, time: editingTime } : task
-            );
-            setData(updatedTasks);
             data.forEach(task => task === editingTask ? uploadTask({ ...editingTask, name: editingName, time: editingTime }) : null);
         }
         console.log("updating")
@@ -117,10 +102,6 @@ const MonthlyView = ({ data, setData }) => {
         }
     };
 
-    const handleDragStart = (task) => {
-        setDraggedTask(task);
-    };
-
     const handleDrop = (date) => {
         const updatedTasks = data.map(task =>
             task === draggedTask ? { ...task, date: date.toLocaleDateString('en-CA') } : task
@@ -133,21 +114,17 @@ const MonthlyView = ({ data, setData }) => {
 
     const handleDragOver = (event) => {
         event.preventDefault();
+        setEditingTask(null);
+        setNewEditingTask(null);
     };
 
     return (
         <div className="calendar-container-monthview">
             <Dates setDates={setDates} setFirstDay={setFirstDay} />
-            <div className="week-row-monthview">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                    <div key={day} className="day-label-monthview">{day}</div>
-                ))}
-            </div>
+            <WeekRow />
 
             <div className="calendar-grid-monthview">
-                {Array.from({ length: firstDay }).map((_, index) => (
-                    <div key={`empty-${index}`} className="day-card-monthview empty"></div>
-                ))}
+                <EmptyDays count={firstDay} />
                 {dates.map((date, index) => (
                     <div key={index} className="day-card-monthview"
                         onClick={(e) => {
@@ -167,7 +144,7 @@ const MonthlyView = ({ data, setData }) => {
                                     onClick={() => startEditing(task)}
                                     style={{ position: 'relative' }}
                                     draggable
-                                    onDragStart={() => handleDragStart(task)}
+                                    onDragStart={() => setDraggedTask(task)}
                                 >
 
                                     {!newEditingTask &&
@@ -178,8 +155,8 @@ const MonthlyView = ({ data, setData }) => {
                                             <TaskInputs
                                                 editingName={editingName}
                                                 editingTime={editingTime}
-                                                handleNameChange={handleNameChange}
-                                                handleTimeChange={handleTimeChange}
+                                                setEditingName={setEditingName}
+                                                setEditingTime={setEditingTime}
                                                 handleKeyDown={handleKeyDown}
                                             />
                                         ) : (
@@ -202,8 +179,8 @@ const MonthlyView = ({ data, setData }) => {
                                 <TaskInputs
                                     editingName={editingName}
                                     editingTime={editingTime}
-                                    handleNameChange={handleNameChange}
-                                    handleTimeChange={handleTimeChange}
+                                    setEditingName={setEditingName}
+                                    setEditingTime={setEditingTime}
                                     handleKeyDown={handleKeyDown1}
                                 />
                             }

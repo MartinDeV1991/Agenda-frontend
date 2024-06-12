@@ -103,13 +103,34 @@ const MonthlyView = ({ data, setData }) => {
     };
 
     const handleDrop = (date) => {
-        const updatedTasks = data.map(task =>
-            task === draggedTask ? { ...task, date: date.toLocaleDateString('en-CA') } : task
-        );
-        setData(updatedTasks);
-        setDraggedTask(null);
-        const task = { ...draggedTask, date: date.toLocaleDateString('en-CA') }
-        uploadTask(task);
+        if (!draggedTask || !draggedTask.label || draggedTask.label === '' || draggedTask.label === undefined || draggedTask.label === null) {
+            const task = { ...draggedTask, date: date.toLocaleDateString('en-CA') }
+            uploadTask(task);
+            setDraggedTask(null);
+        } else {
+            if (window.confirm("Do you want to move all tasks with the same label?")) {
+                const dayOfWeekForInputDate = date.getDay();
+                const dayOfWeekForDraggedTaskDate = new Date(draggedTask.date).getDay();
+                const shiftBy = dayOfWeekForInputDate - dayOfWeekForDraggedTaskDate;
+
+                data.forEach(task => {
+                    if (task.label === draggedTask.label) {
+                        const newDate = new Date(task.date);
+                        newDate.setDate(newDate.getDate() + shiftBy);
+                        uploadTask({ ...task, date: newDate.toLocaleDateString('en-CA') });
+                    }
+                });
+                setDraggedTask(null);
+            }
+            else {
+                console.log("here")
+                if (window.confirm("Do you want to remove the label from this task?")) {
+                    const task = { ...draggedTask, date: date.toLocaleDateString('en-CA'), label: '' }
+                    uploadTask(task);
+                    setDraggedTask(null);
+                }
+            }
+        }
     };
 
     const handleDragOver = (event) => {

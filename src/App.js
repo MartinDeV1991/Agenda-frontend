@@ -4,7 +4,9 @@ import { Route, Routes } from 'react-router-dom'
 
 import Calendar from './Pages/Calendar';
 import WeeklyPage from './Pages/WeeklyPage';
+import ToDo from './Pages/ToDo';
 import NavBar from './Components/Navbar/Navbar';
+
 function App() {
   return (
     <div className="App">
@@ -12,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Calendar />} />
         <Route path='/weekly' element={<WeeklyPage />} />
+        <Route path='/todo' element={<ToDo />} />
       </Routes>
     </div>
   );

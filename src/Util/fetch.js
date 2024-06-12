@@ -22,7 +22,7 @@ export const postAPI = (task, setData) => {
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('Updated document:', data);
+            // console.log('Updated document:', data);
             fetchAPI(setData);
         })
         .catch((error) => {
@@ -35,8 +35,50 @@ export const removeAPI = (task, setData) => {
         method: 'DELETE',
     })
         .then(() => {
-            console.log('Task removed');
+            // console.log('Task removed');
             fetchAPI(setData);
+        })
+        .catch((error) => {
+            console.error('Error removing task:', error);
+        });
+}
+
+export const fetchTodoAPI = (setTodoData) => {
+    fetch('http://localhost:5000/todo/mongodb/all-todo-items')
+        .then((response) => response.json())
+        .then((data) => {
+            setTodoData(data);
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+export const postTodoAPI = (task, setTodoData) => {
+    fetch(`http://localhost:5000/todo/mongodb/todo-item/${task._id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(task),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            // console.log('Updated document:', data);
+            fetchTodoAPI(setTodoData);
+        })
+        .catch((error) => {
+            console.error('Error updating document:', error);
+        });
+}
+
+export const removeTodoAPI = (task, setTodoData) => {
+    fetch(`http://localhost:5000/todo/mongodb/todo-item/${task._id}`, {
+        method: 'DELETE',
+    })
+        .then(() => {
+            // console.log('Task removed');
+            fetchTodoAPI(setTodoData);
         })
         .catch((error) => {
             console.error('Error removing task:', error);

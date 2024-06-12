@@ -7,8 +7,8 @@ import { postAPI } from "../../Util/fetch";
 const AddRecurringTasks = ({ setData }) => {
 
     const [selectedDay, setSelectedDay] = useState("Sunday");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [startDate, setStartDate] = useState(new Date().toLocaleDateString('en-CA'));
+    const [endDate, setEndDate] = useState(new Date().toLocaleDateString('en-CA'));
 
     const [taskName, setTaskName] = useState('');
     const [taskTime, setTaskTime] = useState('');
@@ -49,14 +49,10 @@ const AddRecurringTasks = ({ setData }) => {
             currentDate.setDate(currentDate.getDate() + 1);
         }
         tasks.forEach(task => {
-            uploadTask(task);
+            if (task.name !== '') {
+                postAPI(task, setData);
+            }
         });
-    }
-
-    const uploadTask = (task) => {
-        if (task.name !== '') {
-            postAPI(task, setData);
-        }
     }
 
     return (

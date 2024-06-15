@@ -22,9 +22,7 @@ const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 200 }, (_, index) => index + currentYear - 100);
 
 
-const Dates = ({ setFirstDay, setDates }) => {
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+const Dates = ({ setFirstDay, setDates, selectedMonth, selectedYear, setSelectedMonth, setSelectedYear }) => {
 
     const { dates, adjustedFirstDay } = generateMonthDates(selectedYear, selectedMonth);
     const monthName = dates[0].toLocaleDateString('en-CA', { month: 'long', year: 'numeric' });
@@ -48,6 +46,9 @@ const Dates = ({ setFirstDay, setDates }) => {
         setFirstDay(adjustedFirstDay);
     }, [selectedMonth, selectedYear]);
 
+    const leftArrow = '<';
+    const rightArrow = '>';
+
     return (
         <div>
             <select className="year-select-monthview" onChange={handleYearChange} value={selectedYear} >
@@ -62,7 +63,11 @@ const Dates = ({ setFirstDay, setDates }) => {
                 ))}
             </select>
             <button onClick={goToCurrent}>Go to current year/month</button>
-            <h2 className="month-name-monthview">{monthName}</h2>
+            <div className="month-name-container-monthview">
+                <button className="arrow" onClick={() => setSelectedMonth(selectedMonth - 1)}>{leftArrow} </button>
+                <div className="month-name-monthview">{monthName}</div>
+                <button className="arrow" onClick={() => setSelectedMonth(selectedMonth + 1)}>{rightArrow} </button>
+            </div>
         </div>
     )
 

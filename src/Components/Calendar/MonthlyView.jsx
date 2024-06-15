@@ -21,7 +21,7 @@ const EmptyDays = ({ count }) => (
     ))
 );
 
-const MonthlyView = ({ data, setData }) => {
+const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear }) => {
 
     const [dates, setDates] = useState([]);
     const [firstDay, setFirstDay] = useState(0);
@@ -139,9 +139,18 @@ const MonthlyView = ({ data, setData }) => {
         setNewEditingTask(null);
     };
 
+    const colorCodes = {
+        'Personal': 'rgb(0,0,255,0.5)',
+        'Work': 'rgb(255,0,0,0.5)',
+        'Sports': 'rgb(0,255,0,0.5)',
+        'Social': 'rgb(255,255,0,0.5)',
+        'Other': 'rgb(0,255,255,0.5)',
+        'None': 'rgb(255,0,255,0.5)',
+    };
+
     return (
         <div className="calendar-container-monthview">
-            <Dates setDates={setDates} setFirstDay={setFirstDay} />
+            <Dates setDates={setDates} setFirstDay={setFirstDay} selectedMonth={selectedMonth} selectedYear={selectedYear} setSelectedMonth={setSelectedMonth} setSelectedYear={setSelectedYear} />
             <WeekRow />
 
             <div className="calendar-grid-monthview">
@@ -163,7 +172,7 @@ const MonthlyView = ({ data, setData }) => {
                                     key={index}
                                     className="task-monthview"
                                     onClick={() => startEditing(task)}
-                                    style={{ position: 'relative' }}
+                                    style={{ position: 'relative', color: 'black', backgroundColor: colorCodes[task.category] }}
                                     draggable
                                     onDragStart={() => setDraggedTask(task)}
                                 >

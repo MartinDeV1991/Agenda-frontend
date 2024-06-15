@@ -111,3 +111,19 @@ h1 {
   border: 1px solid #ddd;
   border-radius: 3px;
 }
+
+.month-name-container-monthview {
+  display: flex;
+  justify-content: center;
+}
+
+.month-name-monthview {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.arrow {
+  margin: 0 10px;
+  font: 900 20px Arial;
+}

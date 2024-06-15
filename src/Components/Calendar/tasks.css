@@ -1,0 +1,37 @@
+.find-by-name-container,
+.find-by-label-container,
+.find-by-category-container {
+    margin-top: 20px;
+}
+
+.task-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 60%;
+    margin: 0 auto;
+}
+
+.task-item {
+    margin-top: 10px;
+    margin-left: 50px;
+    margin-right: 50px;
+    border: 1px solid black;
+    box-sizing: border-box;
+    background-color: rgba(100, 100, 255, 0.5);
+    padding: 5px;
+    border-radius: 10px;
+    flex: 1 1 calc(20% - 20px);
+    max-width: calc(25% - 20px);
+}
+
+.task-name {
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.task-date,
+.task-label {
+    margin-top: 5px;
+}

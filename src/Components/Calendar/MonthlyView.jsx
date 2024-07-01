@@ -21,13 +21,16 @@ const EmptyDays = ({ count }) => (
     ))
 );
 
-const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear }) => {
+const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, colorCodes, showTime }) => {
 
     const [dates, setDates] = useState([]);
     const [firstDay, setFirstDay] = useState(0);
 
     const [editingName, setEditingName] = useState('');
     const [editingTime, setEditingTime] = useState('');
+    const [editingLabel, setEditingLabel] = useState('');
+    const [editingCategory, setEditingCategory] = useState('');
+
     const [editingTask, setEditingTask] = useState(null);
     const [newEditingTask, setNewEditingTask] = useState(null);
 
@@ -41,6 +44,8 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
         setEditingTask(task);
         setEditingName(task.name);
         setEditingTime(task.time);
+        setEditingLabel(task.label);
+        setEditingCategory(task.category);
         setNewEditingTask(null);
     };
 
@@ -72,13 +77,13 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
 
     const UpdateTask = () => {
         if (editingTask) {
-            data.forEach(task => task === editingTask ? uploadTask({ ...editingTask, name: editingName, time: editingTime }) : null);
+            data.forEach(task => task === editingTask ? uploadTask({ ...editingTask, name: editingName, time: editingTime, category: editingCategory, label: editingLabel }) : null);
         }
         console.log("updating")
     };
 
     const addTask = () => {
-        const task = { ...newEditingTask, name: editingName, time: editingTime }
+        const task = { ...newEditingTask, name: editingName, time: editingTime, category: editingCategory, label: editingLabel }
         if (task && task.name !== '') {
             setData((prevData) => [...prevData, task]);
             uploadTask(task);
@@ -123,7 +128,6 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
                 setDraggedTask(null);
             }
             else {
-                console.log("here")
                 if (window.confirm("Do you want to remove the label from this task?")) {
                     const task = { ...draggedTask, date: date.toLocaleDateString('en-CA'), label: '' }
                     uploadTask(task);
@@ -139,15 +143,6 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
         setNewEditingTask(null);
     };
 
-    const colorCodes = {
-        'Personal': 'rgb(0,0,255,0.5)',
-        'Work': 'rgb(255,0,0,0.5)',
-        'Sports': 'rgb(0,255,0,0.5)',
-        'Social': 'rgb(255,255,0,0.5)',
-        'Other': 'rgb(0,255,255,0.5)',
-        'None': 'rgb(255,0,255,0.5)',
-    };
-
     return (
         <div className="calendar-container-monthview">
             <Dates setDates={setDates} setFirstDay={setFirstDay} selectedMonth={selectedMonth} selectedYear={selectedYear} setSelectedMonth={setSelectedMonth} setSelectedYear={setSelectedYear} />
@@ -156,7 +151,7 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
             <div className="calendar-grid-monthview">
                 <EmptyDays count={firstDay} />
                 {dates.map((date, index) => (
-                    <div key={index} className="day-card-monthview"
+                    <div key={index} className={`day-card-monthview ${date.toLocaleDateString('en-CA') === new Date().toLocaleDateString('en-CA') ? 'today-card-monthview' : ''}`}
                         onClick={(e) => {
                             if (e.target === e.currentTarget) {
                                 createNewTaskAndEdit(date);
@@ -164,6 +159,7 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
                         }}
                         onDragOver={handleDragOver}
                         onDrop={() => handleDrop(date)}
+
                     >
                         <div className="day-number-monthview">{date.getDate()}</div>
                         <div className="tasks-monthview">
@@ -171,7 +167,9 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
                                 <div
                                     key={index}
                                     className="task-monthview"
-                                    onClick={() => startEditing(task)}
+                                    onClick={() => {
+                                        startEditing(task)
+                                    }}
                                     style={{ position: 'relative', color: 'black', backgroundColor: colorCodes[task.category] }}
                                     draggable
                                     onDragStart={() => setDraggedTask(task)}
@@ -185,13 +183,18 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
                                             <TaskInputs
                                                 editingName={editingName}
                                                 editingTime={editingTime}
+                                                editingLabel={editingLabel}
+                                                editingCategory={editingCategory}
                                                 setEditingName={setEditingName}
                                                 setEditingTime={setEditingTime}
+                                                setEditingLabel={setEditingLabel}
+                                                setEditingCategory={setEditingCategory}
                                                 handleKeyDown={handleKeyDown}
+                                                colorCodes={colorCodes}
                                             />
                                         ) : (
                                             <>
-                                                {`${task.name} ${task.time ? `(${task.time})` : ''}`}
+                                                {`${task.name} ${showTime && task.time ? `(${task.time})` : ''}`}
                                                 <button
                                                     onClick={() => handleRemoveTask(task)}
                                                     className="remove-button"
@@ -209,9 +212,14 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
                                 <TaskInputs
                                     editingName={editingName}
                                     editingTime={editingTime}
+                                    editingLabel={editingLabel}
+                                    editingCategory={editingCategory}
                                     setEditingName={setEditingName}
                                     setEditingTime={setEditingTime}
+                                    setEditingLabel={setEditingLabel}
+                                    setEditingCategory={setEditingCategory}
                                     handleKeyDown={handleKeyDown1}
+                                    colorCodes={colorCodes}
                                 />
                             }
                         </div>

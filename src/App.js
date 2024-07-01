@@ -6,6 +6,7 @@ import Calendar from './Pages/Calendar';
 import WeeklyPage from './Pages/WeeklyPage';
 import ToDo from './Pages/ToDo';
 import NavBar from './Components/Navbar/Navbar';
+import FinancePage from './Pages/FinancePage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Calendar />} />
         <Route path='/weekly' element={<WeeklyPage />} />
         <Route path='/todo' element={<ToDo />} />
+        <Route path='finance' element={<FinancePage />} />
       </Routes>
     </div>
   );

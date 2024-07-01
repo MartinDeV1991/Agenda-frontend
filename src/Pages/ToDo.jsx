@@ -6,6 +6,10 @@ const ToDo = () => {
     const [todoData, setTodoData] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
+    const [editing, setEditing] = useState(false);
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [editingName, setEditingName] = useState('');
+
     const handleAddItem = () => {
         if (inputValue.trim() !== '') {
             const task = {
@@ -33,9 +37,9 @@ const ToDo = () => {
     };
 
     const handleDrop = (event, listType) => {
-        const draggedIndex = parseInt(event.dataTransfer.getData('index'), 10);
-        const item = todoData[draggedIndex];
-        postTodoAPI({ ...item, type: listType }, setTodoData);
+        const draggedIndex = event.dataTransfer.getData('index');
+        const draggedItem = todoData.find(task => task._id === draggedIndex);
+        postTodoAPI({ ...draggedItem, type: listType }, setTodoData);
     };
 
     return (
@@ -58,11 +62,24 @@ const ToDo = () => {
                         {todoData
                             .filter(item => item.type === 'todo')
                             .map((item, index) => (
-                                <li key={index}
+                                <li key={item._id}
                                     draggable
-                                    onDragStart={(event) => handleDragStart(event, index, 'todo')}>
-                                    {item.name}
-                                    <button style={{ marginLeft: '10px', fontSize: '8px', padding: '0px', position: 'relative', top: '-3px', right: '0px' }} onClick={() => removeTodoAPI(item, setTodoData)}>X</button>
+                                    onDragStart={(event) => handleDragStart(event, item._id, 'todo')}
+                                    onDoubleClick={() => {
+                                        setEditingIndex(item._id);
+                                        setEditing(true);
+                                        setEditingName(item.name)
+                                    }}
+                                    onKeyDown={(event) => event.key === 'Enter' && setEditing(false) && setEditingIndex(null)}
+                                >
+                                    {(!editing || editingIndex !== item._id) && (
+                                        <div>
+                                            {item.name}
+                                            <button style={{ marginLeft: '10px', fontSize: '8px', padding: '0px', position: 'relative', top: '-3px', right: '0px' }} onClick={() => removeTodoAPI(item, setTodoData)}>X</button>
+                                        </div>
+                                    )}
+
+                                    {editing && editingIndex === item._id && <input type="text" style={{width: '95%'}} value={editingName} onChange={(event) => setEditingName(event.target.value)} autoFocus />}
                                 </li>
                             ))}
                     </ul>
@@ -75,17 +92,29 @@ const ToDo = () => {
                         {todoData
                             .filter(item => item.type === 'done')
                             .map((item, index) => (
-                                <li key={index}
+                                <li key={item._id}
                                     draggable
-                                    onDragStart={(event) => handleDragStart(event, index, 'done')}>
-                                    {item.name}
-                                    <button style={{ marginLeft: '10px', fontSize: '8px', padding: '0px', position: 'relative', top: '-3px', right: '0px' }} onClick={() => removeTodoAPI(item, setTodoData)}>X</button>
+                                    onDragStart={(event) => handleDragStart(event, item._id, 'done')}
+                                    onDoubleClick={() => {
+                                        setEditingIndex(item._id);
+                                        setEditing(true);
+                                        setEditingName(item.name)
+                                    }}
+                                    onKeyDown={(event) => event.key === 'Enter' && setEditing(false) && setEditingIndex(null)}
+                                >
+                                    {(!editing || editingIndex !== item._id) && (
+                                        <div>
+                                            {item.name}
+                                            <button style={{ marginLeft: '10px', fontSize: '8px', padding: '0px', position: 'relative', top: '-3px', right: '0px' }} onClick={() => removeTodoAPI(item, setTodoData)}>X</button>
+                                        </div>
+                                    )}
+                                    {editing && editingIndex === item._id && <input type="text" style={{width: '95%'}} value={editingName} onChange={(event) => setEditingName(event.target.value)} autoFocus />}
                                 </li>
                             ))}
                     </ul>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -70,7 +70,6 @@ const Dates = ({ setFirstDay, setDates, selectedMonth, selectedYear, setSelected
             </div>
         </div>
     )
-
 }
 
 export default Dates;

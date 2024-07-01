@@ -83,6 +83,11 @@ h1 {
   font-weight: 500;
 }
 
+.today-card-monthview {
+  border: 2px solid rgb(0, 0, 255, 0.3);
+  background-color: rgb(0, 0, 255, 0.2);
+}
+
 .day-card-monthview.empty {
   background-color: transparent;
   border: none;
@@ -126,4 +131,39 @@ h1 {
 .arrow {
   margin: 0 10px;
   font: 900 20px Arial;
+}
+
+.category-legend-item {
+  font-weight: 700;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.calendar-legend-container {
+  display: flex;
+  align-items: center;
+}
+
+.category-legend {
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+.calendar-page-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.show-time-button {
+  margin-bottom: 50px;
+  background-color: rgb(0, 128, 0, 0.7);
+  padding: 10px;
+}
+
+.hide-time-button {
+  margin-bottom: 50px;
+  background-color: rgb(255, 0, 0, 0.7);
+  padding: 10px;
 }

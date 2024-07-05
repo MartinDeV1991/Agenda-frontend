@@ -25,14 +25,23 @@ const FinanceTable = ({ data, setFetchedData }) => {
         };
 
         return [
-            { field: "_id", editable: false, width: 70 },
+            // { field: "_id", editable: false, width: 70 },
             { field: "date", headerName: "Date", width: 150, sort: 'desc' },
             {
                 field: "total",
                 headerName: "Total",
                 width: 150,
                 editable: false,
-                valueFormatter: params => numberWithCommas(params.value.toFixed(2)),
+                valueFormatter: params => params.value ? numberWithCommas(params.value.toFixed(2)) : "",
+                cellStyle: {color: 'black', backgroundColor: 'rgba(75, 192, 192, 1)'}
+            },
+            {
+                field: "difference",
+                headerName: "Difference",
+                width: 150,
+                editable: false,
+                valueFormatter: params => params.value ? numberWithCommas(params.value.toFixed(2)) : "",
+                cellStyle: {color: 'black'}
             },
             ...Object.keys(data[0])
                 .filter(key => key.startsWith("account"))
@@ -57,7 +66,7 @@ const FinanceTable = ({ data, setFetchedData }) => {
 
     return (
         <div>
-            Finance Table
+            {/* <div className={"ag-theme-quartz"} style={{ height: '500px', width: '1800px', margin: '30px' }}> */}
             <div className={"ag-theme-quartz"} style={{ height: '500px', width: '1800px', margin: '30px' }}>
                 <AgGridReact
                     rowData={data}

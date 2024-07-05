@@ -16,6 +16,24 @@ const FinanceGraph = ({ data }) => {
                 borderColor: 'rgba(75, 192, 192, 1)',
                 data: data.map(item => item.total),
             },
+            {
+                label: 'Binck fundcoach',
+                backgroundColor: 'rgba(75, 25, 192, 0.2)',
+                borderColor: 'rgba(75, 25, 192, 1)',
+                data: data.map(item => item['account Binck Fundscoach'] + item['account Binck zelf beleggen']),
+            },
+            {
+                label: 'TradersOnly',
+                backgroundColor: 'rgba(175, 25, 192, 0.2)',
+                borderColor: 'rgba(175, 25, 192, 1)',
+                data: data.map(item => item['account TradersOnly']),
+            },
+            {
+                label: 'Leaseplan',
+                backgroundColor: 'rgba(175, 192, 25, 0.2)',
+                borderColor: 'rgba(175, 192, 25, 1)',
+                data: data.map(item => item['account LeaseplanBank']),
+            },
         ],
     };
 
@@ -35,6 +53,9 @@ const FinanceGraph = ({ data }) => {
                     display: true,
                     text: 'Month',
                 },
+                ticks: {
+                    maxTicksLimit: chartData.labels.length > 12 ? 12 : chartData.labels.length, // Adjust the number of ticks based on data points
+                },
             },
             y: {
                 title: {
@@ -48,7 +69,6 @@ const FinanceGraph = ({ data }) => {
 
     return (
         <div style={{ height: '500px', width: '1000px', margin: '30px' }}>
-            Finance Graph
             <Line data={chartData} options={options} />
         </div >
     )

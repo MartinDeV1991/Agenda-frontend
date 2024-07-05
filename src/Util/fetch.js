@@ -89,6 +89,7 @@ export const removeTodoAPI = (task, setTodoData) => {
 
 
 export const postFinanceAPI = (row, setData) => {
+    console.log(row)
     fetch(`http://localhost:5000/finance/mongodb/finance/${row._id}`, {
         method: 'POST',
         headers: {
@@ -98,7 +99,7 @@ export const postFinanceAPI = (row, setData) => {
     })
         .then((response) => response.json())
         .then(() => {
-            fetchFinanceAPI(setData);
+            // fetchFinanceAPI(setData);
         })
         .catch((error) => {
             console.error('Error updating document:', error);
@@ -115,3 +116,15 @@ export const fetchFinanceAPI = (setData) => {
             console.error('Error fetching data:', error);
         });
 }
+
+export const fetchMappingAPI = (setMapping) => {
+    fetch('http://localhost:5000/finance/mongodb/finance/mapping')
+        .then((response) => response.json())
+        .then((data) => {
+            setMapping(data);
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+}
+

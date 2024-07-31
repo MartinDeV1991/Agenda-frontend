@@ -18,7 +18,7 @@ function App() {
         <Route path="/" element={<Calendar />} />
         <Route path='/weekly' element={<WeeklyPage />} />
         <Route path='/todo' element={<ToDo />} />
-        <Route path='finance' element={<FinancePage />} />
+        <Route path='/finance' element={<FinancePage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login' element={<LogInPage />} />
       </Routes>

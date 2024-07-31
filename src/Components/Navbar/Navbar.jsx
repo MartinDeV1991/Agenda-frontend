@@ -1,15 +1,15 @@
 
-import './navbar.css'
-const NavBar = () => {
+import { Link } from 'react-router-dom';
 
+const NavBar = () => {
     return (
         <div className='navbar'>
-            <a className='link-to-page' href='/'>Monthly </a>
-            <a className='link-to-page' href='/weekly'>Weekly</a>
-            <a className='link-to-page' href='/todo'>To do List</a>
-            <a className='link-to-page' href='/finance'>Finance</a>
+            <Link className='link-to-page' to='/'>Monthly</Link>
+            <Link className='link-to-page' to='/weekly'>Weekly</Link>
+            <Link className='link-to-page' to='/todo'>To do List</Link>
+            <Link className='link-to-page' to='/finance'>Finance</Link>
         </div>
-    )
+    );
 }
 
 export default NavBar;

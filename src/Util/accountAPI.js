@@ -1,7 +1,7 @@
 
 export const signUp = async (data) => {
     try {
-        const response = await fetch(`http://localhost:5000/user/mongodb/signup`, {
+        const response = await fetch(`${process.env.REACT_APP_MONGO_PATH}/user/signup`, {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -19,7 +19,7 @@ export const signUp = async (data) => {
 
 export const login = async (loginRequest) => {
     try {
-        const response = await fetch('http://localhost:5000/user/mongodb/login', {
+        const response = await fetch(`${process.env.REACT_APP_MONGO_PATH}/user/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 const generateMonthDates = (year, month) => {
     const dates = [];
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -14,8 +14,7 @@ const generateMonthDates = (year, month) => {
 };
 
 const months = Array.from({ length: 12 }, (_, index) => {
-    const date = new Date();
-    date.setMonth(index);
+    const date = new Date(2000, index);
     return { value: index, label: date.toLocaleDateString('en-CA', { month: 'long' }) };
 });
 const currentYear = new Date().getFullYear();
@@ -24,8 +23,13 @@ const years = Array.from({ length: 200 }, (_, index) => index + currentYear - 10
 
 const Dates = ({ setFirstDay, setDates, selectedMonth, selectedYear, setSelectedMonth, setSelectedYear }) => {
 
-    const { dates, adjustedFirstDay } = generateMonthDates(selectedYear, selectedMonth);
-    const monthName = dates[0].toLocaleDateString('en-CA', { month: 'long', year: 'numeric' });
+    const { dates, adjustedFirstDay } = useMemo(() => {
+        return generateMonthDates(selectedYear, selectedMonth);
+    }, [selectedYear, selectedMonth]);
+
+    const monthName = useMemo(() => {
+        return dates[0]?.toLocaleDateString('en-CA', { month: 'long', year: 'numeric' }) || '';
+    }, [dates]);
 
     const handleMonthChange = (event) => {
         const selectedMonth = parseInt(event.target.value, 10);
@@ -44,7 +48,7 @@ const Dates = ({ setFirstDay, setDates, selectedMonth, selectedYear, setSelected
     useEffect(() => {
         setDates(dates);
         setFirstDay(adjustedFirstDay);
-    }, [selectedMonth, selectedYear]);
+    }, [adjustedFirstDay, setFirstDay, setDates, dates]);
 
     const leftArrow = '<';
     const rightArrow = '>';

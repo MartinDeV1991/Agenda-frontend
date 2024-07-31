@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signUp } from "../../Util/account";
+import { signUp } from "../../Util/accountAPI";
 
 const SignUpPage = () => {
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ const SignUpPage = () => {
         try {
             await signUp(formData);
             console.log("User added to the database");
-            // navigate(`/login`);
+            navigate(`/login`);
         } catch (error) {
             console.error("Error:", error);
         }

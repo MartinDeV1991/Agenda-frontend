@@ -5,7 +5,7 @@ import FinanceGraph from './FinanceGraph';
 
 import { useEffect, useState } from 'react';
 
-import { fetchFinanceAPI, fetchMappingAPI } from '../../Util/fetch';
+import { fetchFinanceAPI, fetchMappingAPI } from '../../Util/financeAPI';
 
 const FinancePage = () => {
 

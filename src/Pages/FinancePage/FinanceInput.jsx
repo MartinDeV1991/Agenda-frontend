@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { postFinanceAPI } from '../../Util/fetch';
+import { postFinanceAPI } from '../../Util/financeAPI';
 
 import data from '../../Data/finance-data.json';
 const FinanceInput = ({ fetchedData, setFetchedData, mapping, convertAccountNames }) => {

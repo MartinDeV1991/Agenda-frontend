@@ -1,5 +1,5 @@
 
-import { removeAPI } from "../../Util/fetch";
+import { removeAPI } from "../../Util/agendaAPI";
 import { useState } from "react";
 
 const RemoveRecurrentTask = ({ data, setData }) => {

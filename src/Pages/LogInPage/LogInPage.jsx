@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../Util/account";
+import { login } from "../../Util/accountAPI";
 
 const LogInPage = () => {
     const navigate = useNavigate();
@@ -31,7 +31,7 @@ const LogInPage = () => {
                 localStorage.setItem("agenda_first_name", data.user.firstName);
                 localStorage.setItem("agenda_last_name", data.user.lastName);
                 localStorage.setItem("agenda_id", data.user.id);
-                // navigate(`/`);
+                navigate(`/`);
             } else {
                 localStorage.setItem("agenda_id", "1");
                 localStorage.setItem("agenda_first_name", "User");

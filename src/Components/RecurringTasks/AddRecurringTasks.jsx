@@ -1,7 +1,6 @@
 
 import { useState } from "react";
-import { ObjectId } from "bson";
-import { postAPI } from "../../Util/fetch";
+import { postAPI } from "../../Util/agendaAPI";
 
 const AddRecurringTasks = ({ setData }) => {
 
@@ -48,7 +47,6 @@ const AddRecurringTasks = ({ setData }) => {
             if (selectedDay === currentDate.toLocaleDateString('en-CA', { weekday: 'long' })) {
                 const newTask = {
                     ...task,
-                    _id: new ObjectId().toString(),
                     date: currentDate.toLocaleDateString('en-CA')
                 };
                 tasks.push(newTask);

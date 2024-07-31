@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTodoAPI, postTodoAPI, removeTodoAPI } from '../../Util/fetch';
-import { ObjectId } from 'bson';
+import { fetchTodoAPI, postTodoAPI, removeTodoAPI } from '../../Util/todoAPI';
 
 const ToDo = () => {
     const [todoData, setTodoData] = useState([]);
@@ -13,7 +12,6 @@ const ToDo = () => {
     const handleAddItem = () => {
         if (inputValue.trim() !== '') {
             const task = {
-                _id: new ObjectId().toString(),
                 name: inputValue.trim(),
                 type: 'todo',
             }

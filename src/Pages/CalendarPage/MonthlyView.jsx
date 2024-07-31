@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { ObjectId } from "bson";
 import TaskInputs from "../CalendarPage/TaskInputs";
 import Dates from "../CalendarPage/Dates";
-import { postAPI, removeAPI } from "../../Util/fetch";
+import { postAPI, removeAPI } from "../../Util/agendaAPI";
 
 const WeekRow = () => {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -43,7 +42,6 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
     const createNewTaskAndEdit = (date) => {
         setEditingTask(null);
         let task = {
-            _id: new ObjectId().toString(),
             name: '',
             time: '',
             date: date.toLocaleDateString('en-CA')

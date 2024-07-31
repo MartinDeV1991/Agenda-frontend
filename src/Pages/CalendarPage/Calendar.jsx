@@ -9,7 +9,7 @@ import FindTasks from '../CalendarPage/FindTasks';
 import CategoryLegend from '../CalendarPage/CategoryLegend';
 
 import './calendar.css'
-import { fetchAPI } from '../../Util/fetch';
+import { fetchAPI } from '../../Util/agendaAPI';
 
 const Calendar = () => {
     const [data, setData] = useState([]);

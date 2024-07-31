@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './tasks.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
@@ -8,13 +8,19 @@ const FindTasks = ({ data, setSelectedMonth, setSelectedYear }) => {
     const [taskCategory, setTaskCategory] = useState('');
     const [expandedSection, setExpandedSection] = useState(null);
 
-    const labels = [...new Set(data.filter(task => task.label).map(task => task.label))];
-    const categories = [...new Set(data.filter(task => task.category).map(task => task.category))];
+    const labels = useMemo(() => 
+        [...new Set(data.filter(task => task.label).map(task => task.label))], 
+        [data]
+    );
 
+    const categories = useMemo(() => 
+        [...new Set(data.filter(task => task.category).map(task => task.category))], 
+        [data]
+    );
     useEffect(() => {
         if (labels.length > 0 && !taskLabel) setTaskLabel(labels[0]);
         if (categories.length > 0 && !taskCategory) setTaskCategory(categories[0]);
-    }, [labels, categories]);
+    }, [labels, categories, taskLabel, taskCategory]);
 
     const findTasks = (key, value) => data.filter(task => task[key] === value);
 

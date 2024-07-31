@@ -1,5 +1,5 @@
 
-import { postAPI } from "../../Util/fetch";
+import { postAPI } from "../../Util/agendaAPI";
 import { useState } from "react";
 
 const ShiftRecurringTasks = ({ data, setData }) => {

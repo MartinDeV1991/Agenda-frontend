@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 
 const WeeklyView = ({ data }) => {
-    const [selectedWeek, setSelectedWeek] = useState(1); // Assuming we start from week 1
+    const [selectedWeek, setSelectedWeek] = useState(getWeekNumber()); // Assuming we start from week 1
     const weeksInYear = 52; // Assuming 52 weeks in a year
     const year = 2024; // Assuming a specific year for now
     const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    function getWeekNumber() {
+        let currentDate = new Date();
+        let startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+        let dayOfYear = ((currentDate - startOfYear + (24 * 60 * 60 * 1000)) / 86400000);
+        return Math.floor((dayOfYear + startOfYear.getDay() + 1) / 7) - 1;
+    }
 
     const handleWeekChange = (week) => {
         setSelectedWeek(week);

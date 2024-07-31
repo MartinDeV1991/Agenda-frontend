@@ -25,7 +25,6 @@ const FinanceTable = ({ data, setFetchedData }) => {
         };
 
         return [
-            // { field: "_id", editable: false, width: 70 },
             { field: "date", headerName: "Date", width: 150, sort: 'desc' },
             {
                 field: "total",
@@ -33,7 +32,7 @@ const FinanceTable = ({ data, setFetchedData }) => {
                 width: 150,
                 editable: false,
                 valueFormatter: params => params.value ? numberWithCommas(params.value.toFixed(2)) : "",
-                cellStyle: {color: 'black', backgroundColor: 'rgba(75, 192, 192, 1)'}
+                cellStyle: { color: 'black', backgroundColor: 'rgba(75, 192, 192, 1)' }
             },
             {
                 field: "difference",
@@ -41,7 +40,9 @@ const FinanceTable = ({ data, setFetchedData }) => {
                 width: 150,
                 editable: false,
                 valueFormatter: params => params.value ? numberWithCommas(params.value.toFixed(2)) : "",
-                cellStyle: {color: 'black'}
+                cellStyle: params => {
+                    return { color: params.value < 0 ? 'red' : 'green' };
+                }
             },
             ...Object.keys(data[0])
                 .filter(key => key.startsWith("account"))
@@ -51,8 +52,6 @@ const FinanceTable = ({ data, setFetchedData }) => {
                     width: 150,
                     valueFormatter: params => params.value ? numberWithCommas(params.value.toFixed(2)) : "",
                 })),
-
-
         ];
     }, [data]);
 

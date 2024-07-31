@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ObjectId } from "bson";
-import TaskInputs from "./TaskInputs";
-import Dates from "./Dates";
+import TaskInputs from "../CalendarPage/TaskInputs";
+import Dates from "../CalendarPage/Dates";
 import { postAPI, removeAPI } from "../../Util/fetch";
 
 const WeekRow = () => {
@@ -26,11 +26,6 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
     const [dates, setDates] = useState([]);
     const [firstDay, setFirstDay] = useState(0);
 
-    const [editingName, setEditingName] = useState('');
-    const [editingTime, setEditingTime] = useState('');
-    const [editingLabel, setEditingLabel] = useState('');
-    const [editingCategory, setEditingCategory] = useState('');
-
     const [editingTask, setEditingTask] = useState(null);
     const [newEditingTask, setNewEditingTask] = useState(null);
 
@@ -42,10 +37,6 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
 
     const startEditing = (task) => {
         setEditingTask(task);
-        setEditingName(task.name);
-        setEditingTime(task.time);
-        setEditingLabel(task.label);
-        setEditingCategory(task.category);
         setNewEditingTask(null);
     };
 
@@ -75,33 +66,37 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
         }
     };
 
-    const UpdateTask = () => {
-        if (editingTask) {
-            data.forEach(task => task === editingTask ? uploadTask({ ...editingTask, name: editingName, time: editingTime, category: editingCategory, label: editingLabel }) : null);
+    const updateTask = () => {
+        if (editingTask && editingTask.name !== '') {
+            uploadTask(editingTask);
         }
-        console.log("updating")
+        console.log("Updating task")
     };
 
     const addTask = () => {
-        const task = { ...newEditingTask, name: editingName, time: editingTime, category: editingCategory, label: editingLabel }
-        if (task && task.name !== '') {
-            setData((prevData) => [...prevData, task]);
-            uploadTask(task);
-            console.log("updating")
+        if (newEditingTask && newEditingTask.name !== '') {
+            uploadTask(newEditingTask);
+            console.log("Adding task")
         }
-
     };
     const handleKeyDown1 = (event) => {
         if (event.key === 'Enter') {
             addTask();
             setEditingTask(null);
             setNewEditingTask(null);
+        } else if (event.key === 'Escape') {
+            setEditingTask(null);
+            setNewEditingTask(null);
+            console.log("Escape")
         }
     };
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-            UpdateTask();
+            updateTask();
+            setEditingTask(null);
+            setNewEditingTask(null);
+        } else if (event.key === 'Escape') {
             setEditingTask(null);
             setNewEditingTask(null);
         }
@@ -181,14 +176,8 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
                                         editingTask._id === task._id
                                         ? (
                                             <TaskInputs
-                                                editingName={editingName}
-                                                editingTime={editingTime}
-                                                editingLabel={editingLabel}
-                                                editingCategory={editingCategory}
-                                                setEditingName={setEditingName}
-                                                setEditingTime={setEditingTime}
-                                                setEditingLabel={setEditingLabel}
-                                                setEditingCategory={setEditingCategory}
+                                                editingTask={editingTask}
+                                                setEditingTask={setEditingTask}
                                                 handleKeyDown={handleKeyDown}
                                                 colorCodes={colorCodes}
                                             />
@@ -210,14 +199,8 @@ const MonthlyView = ({ data, setData, selectedMonth, setSelectedMonth, selectedY
                             {newEditingTask &&
                                 parseInt(newEditingTask.date.split('-')[2], 10) === date.getDate() &&
                                 <TaskInputs
-                                    editingName={editingName}
-                                    editingTime={editingTime}
-                                    editingLabel={editingLabel}
-                                    editingCategory={editingCategory}
-                                    setEditingName={setEditingName}
-                                    setEditingTime={setEditingTime}
-                                    setEditingLabel={setEditingLabel}
-                                    setEditingCategory={setEditingCategory}
+                                    editingTask={newEditingTask}
+                                    setEditingTask={setNewEditingTask}
                                     handleKeyDown={handleKeyDown1}
                                     colorCodes={colorCodes}
                                 />

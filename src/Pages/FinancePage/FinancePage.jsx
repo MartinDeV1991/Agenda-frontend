@@ -1,12 +1,11 @@
 
-import FinanceInput from '../Components/Finance/FinanceInput';
-import FinanceTable from '../Components/Finance/FinanceTable';
-import FinanceGraph from '../Components/Finance/FinanceGraph';
+import FinanceInput from './FinanceInput';
+import FinanceTable from './FinanceTable';
+import FinanceGraph from './FinanceGraph';
 
 import { useEffect, useState } from 'react';
-import { dummyData } from '../Components/Finance/AccountDummyData';
 
-import { fetchFinanceAPI, fetchMappingAPI, postFinanceAPI } from '../Util/fetch';
+import { fetchFinanceAPI, fetchMappingAPI } from '../../Util/fetch';
 
 const FinancePage = () => {
 

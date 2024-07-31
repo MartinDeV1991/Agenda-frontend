@@ -1,14 +1,8 @@
 import React from 'react';
 
 const TaskInputs = ({
-    editingName,
-    editingTime,
-    editingLabel,
-    editingCategory,
-    setEditingName,
-    setEditingTime,
-    setEditingLabel,
-    setEditingCategory,
+    editingTask,
+    setEditingTask,
     handleKeyDown,
     colorCodes,
 }) => {
@@ -23,24 +17,23 @@ const TaskInputs = ({
         >
             <input
                 type="text"
-                value={editingName}
-                onChange={(event) => setEditingName(event.target.value)}
+                value={editingTask.name}
+                onChange={(event) => setEditingTask(prev => ({ ...prev, name: event.target.value }))}
                 onKeyDown={handleKeyDown}
                 placeholder="Task Name"
                 autoFocus
-                draggable="false"
             />
             <input
                 type="text"
-                value={editingTime}
-                onChange={(event) => setEditingTime(event.target.value)}
+                value={editingTask.time}
+                onChange={(event) => setEditingTask(prev => ({ ...prev, time: event.target.value }))}
                 onKeyDown={handleKeyDown}
                 placeholder="Time"
             />
             <select
-                value={editingCategory || 'None'}
-                style={{ backgroundColor: editingCategory ? colorCodes[editingCategory] : colorCodes['None'], width: '100%' }}
-                onChange={(event) => setEditingCategory(event.target.value)}
+                value={editingTask.category || 'None'}
+                style={{ backgroundColor: editingTask.category ? colorCodes[editingTask.category] : colorCodes['None'], width: '100%' }}
+                onChange={(event) => setEditingTask(prev => ({ ...prev, category: event.target.value }))}
                 onKeyDown={handleKeyDown}
             >
                 {colorCodes && Object.keys(colorCodes).map(category => (
@@ -51,12 +44,12 @@ const TaskInputs = ({
             </select>
             <input
                 type="text"
-                value={editingLabel}
-                onChange={(event) => setEditingLabel(event.target.value)}
+                value={editingTask.label}
+                onChange={(event) => setEditingTask(prev => ({ ...prev, label: event.target.value }))}
                 onKeyDown={handleKeyDown}
                 placeholder="Label"
             />
-        </div >
+        </div>
     );
 };
 

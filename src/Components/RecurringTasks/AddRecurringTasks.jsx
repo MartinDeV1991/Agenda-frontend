@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { ObjectId } from "bson";
-import { createTasks } from "../../Util/createTasks";
 import { postAPI } from "../../Util/fetch";
 
 const AddRecurringTasks = ({ setData }) => {
@@ -10,9 +9,12 @@ const AddRecurringTasks = ({ setData }) => {
     const [startDate, setStartDate] = useState(new Date().toLocaleDateString('en-CA'));
     const [endDate, setEndDate] = useState(new Date().toLocaleDateString('en-CA'));
 
-    const [taskName, setTaskName] = useState('');
-    const [taskTime, setTaskTime] = useState('');
-    const [taskLabel, setTaskLabel] = useState('');
+    const [task, setTask] = useState({
+        name: '',
+        time: '',
+        label: '',
+        category: ''
+    });
 
     const handleDayChange = (event) => {
         setSelectedDay(event.target.value);
@@ -25,33 +27,36 @@ const AddRecurringTasks = ({ setData }) => {
         setEndDate(event.target.value);
     };
 
+    const handleTaskChange = (event) => {
+        const { name, value } = event.target;
+        setTask(prevTask => ({
+            ...prevTask,
+            [name]: value
+        }));
+    };
+
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     const uploadTasks = () => {
-        const tasks = [];
-
-        if (startDate === '' || endDate === '' || taskName === '') {
-            alert("Please fill in all the fields");
+        if (startDate === '' || endDate === '' || task.name === '') {
+            alert("Please fill in all required fields");
             return;
         }
+        const tasks = [];
         const currentDate = new Date(startDate);
         while (currentDate <= new Date(endDate)) {
             if (selectedDay === currentDate.toLocaleDateString('en-CA', { weekday: 'long' })) {
-                const task = createTasks();
-                task._id = new ObjectId().toString();
-                task.name = taskName;
-                task.time = taskTime;
-                task.date = currentDate.toLocaleDateString('en-CA');
-                task.label = taskLabel;
-
-                tasks.push(task);
+                const newTask = {
+                    ...task,
+                    _id: new ObjectId().toString(),
+                    date: currentDate.toLocaleDateString('en-CA')
+                };
+                tasks.push(newTask);
             }
             currentDate.setDate(currentDate.getDate() + 1);
         }
         tasks.forEach(task => {
-            if (task.name !== '') {
-                postAPI(task, setData);
-            }
+            postAPI(task, setData);
         });
     }
 
@@ -81,15 +86,19 @@ const AddRecurringTasks = ({ setData }) => {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label>
                         Task Name:
-                        <input onChange={(event) => setTaskName(event.target.value)} />
+                        <input name="name" onChange={handleTaskChange} value={task.name} />
                     </label>
                     <label>
                         Task Time:
-                        <input onChange={(event) => setTaskTime(event.target.value)} />
+                        <input name="time" onChange={handleTaskChange} value={task.time} />
                     </label>
                     <label>
                         Task Label:
-                        <input onChange={(event) => setTaskLabel(event.target.value)} />
+                        <input name="label" onChange={handleTaskChange} value={task.label} />
+                    </label>
+                    <label>
+                        Task Category:
+                        <input name="category" onChange={handleTaskChange} value={task.category} />
                     </label>
                     <button onClick={() => uploadTasks()}>Add Task</button>
                 </div>

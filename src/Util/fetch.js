@@ -1,7 +1,14 @@
 
 
 export const fetchAPI = (setData) => {
-    fetch('http://localhost:5000/mongodb/all-items')
+    const token = localStorage.getItem('agenda_token');
+    fetch('http://localhost:5000/mongodb/all-items', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    })
         .then((response) => response.json())
         .then((data) => {
             setData(data);
@@ -13,10 +20,12 @@ export const fetchAPI = (setData) => {
 
 
 export const postAPI = (task, setData) => {
+    const token = localStorage.getItem('agenda_token');
     fetch(`http://localhost:5000/mongodb/item/${task._id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(task),
     })
@@ -31,8 +40,13 @@ export const postAPI = (task, setData) => {
 }
 
 export const removeAPI = (task, setData) => {
+    const token = localStorage.getItem('agenda_token');
     fetch(`http://localhost:5000/mongodb/item/${task._id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
     })
         .then(() => {
             // console.log('Task removed');
@@ -44,7 +58,14 @@ export const removeAPI = (task, setData) => {
 }
 
 export const fetchTodoAPI = (setTodoData) => {
-    fetch('http://localhost:5000/todo/mongodb/all-todo-items')
+    const token = localStorage.getItem('agenda_token');
+    fetch('http://localhost:5000/todo/mongodb/all-todo-items', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    })
         .then((response) => response.json())
         .then((data) => {
             setTodoData(data);
@@ -56,10 +77,12 @@ export const fetchTodoAPI = (setTodoData) => {
 }
 
 export const postTodoAPI = (task, setTodoData) => {
+    const token = localStorage.getItem('agenda_token');
     fetch(`http://localhost:5000/todo/mongodb/todo-item/${task._id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(task),
     })
@@ -74,11 +97,15 @@ export const postTodoAPI = (task, setTodoData) => {
 }
 
 export const removeTodoAPI = (task, setTodoData) => {
+    const token = localStorage.getItem('agenda_token');
     fetch(`http://localhost:5000/todo/mongodb/todo-item/${task._id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
     })
         .then(() => {
-            // console.log('Task removed');
             fetchTodoAPI(setTodoData);
         })
         .catch((error) => {
@@ -86,14 +113,13 @@ export const removeTodoAPI = (task, setTodoData) => {
         });
 }
 
-
-
 export const postFinanceAPI = (row, setData) => {
-    console.log(row)
+    const token = localStorage.getItem('agenda_token');
     fetch(`http://localhost:5000/finance/mongodb/finance/${row._id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(row),
     })
@@ -107,7 +133,14 @@ export const postFinanceAPI = (row, setData) => {
 }
 
 export const fetchFinanceAPI = (setData) => {
-    fetch('http://localhost:5000/finance/mongodb/finance')
+    const token = localStorage.getItem('agenda_token');
+    fetch('http://localhost:5000/finance/mongodb/finance', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    })
         .then((response) => response.json())
         .then((data) => {
             setData(data);
@@ -118,7 +151,14 @@ export const fetchFinanceAPI = (setData) => {
 }
 
 export const fetchMappingAPI = (setMapping) => {
-    fetch('http://localhost:5000/finance/mongodb/finance/mapping')
+    const token = localStorage.getItem('agenda_token');
+    fetch('http://localhost:5000/finance/mongodb/finance/mapping', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    })
         .then((response) => response.json())
         .then((data) => {
             setMapping(data);

@@ -1,22 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
 
-import MonthlyView from "../Components/Calendar/MonthlyView";
-import AddRecurringTasks from "../Components/RecurringTasks/AddRecurringTasks";
-import ShiftRecurringTasks from '../Components/RecurringTasks/ShiftRecurringTasks';
-import RemoveRecurringTasks from '../Components/RecurringTasks/RemoveRecurringTasks';
-import FindTasks from '../Components/Calendar/FindTasks';
-import CategoryLegend from '../Components/Calendar/CategoryLegend';
+import MonthlyView from "../CalendarPage/MonthlyView";
+import AddRecurringTasks from "../../Components/RecurringTasks/AddRecurringTasks";
+import ShiftRecurringTasks from '../../Components/RecurringTasks/ShiftRecurringTasks';
+import RemoveRecurringTasks from '../../Components/RecurringTasks/RemoveRecurringTasks';
+import FindTasks from '../CalendarPage/FindTasks';
+import CategoryLegend from '../CalendarPage/CategoryLegend';
 
 import './calendar.css'
-import { fetchAPI } from '../Util/fetch';
+import { fetchAPI } from '../../Util/fetch';
 
 const Calendar = () => {
     const [data, setData] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-    const [showTime, setShowTime] = useState(false);
+    const [showTime, setShowTime] = useState(true);
 
     useEffect(() => {
         fetchAPI(setData);
